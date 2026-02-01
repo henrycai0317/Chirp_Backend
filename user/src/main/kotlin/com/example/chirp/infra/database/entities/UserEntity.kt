@@ -1,6 +1,6 @@
-package com.example.user.infra.database.entities
+package com.example.chirp.infra.database.entities
 
-import com.example.user.domain.model.UserId
+import com.example.chirp.domain.model.UserId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

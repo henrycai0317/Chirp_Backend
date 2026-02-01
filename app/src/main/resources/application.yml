@@ -3,8 +3,8 @@ spring:
     name: chirp
 
   datasource:
-    url: jdbc:postgresql://postgres:db.eqxrpoerqgzxywdqoale.supabase.co:5432/postgres
-    username: postgres
+    url: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:5432/postgres
+    username: postgres.eqxrpoerqgzxywdqoale
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
@@ -27,7 +27,6 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         show_sql: true
 
