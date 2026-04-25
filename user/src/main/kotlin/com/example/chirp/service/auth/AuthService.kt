@@ -1,5 +1,6 @@
 package com.example.chirp.service.auth
 
+import com.example.chirp.domain.exception.EmailNotVerifiedException
 import com.example.chirp.domain.exception.InvalidCredentialsException
 import com.example.chirp.domain.exception.InvalidTokenException
 import com.example.chirp.domain.exception.UserAlreadyExistsException
@@ -27,11 +28,14 @@ class AuthService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val jwtService: JwtService,
-    private val refreshTokenRepository: RefreshTokenRepository
+    private val refreshTokenRepository: RefreshTokenRepository,
+    private val emailVerificationService: EmailVerificationService
 ) {
+    @Transactional
     fun register(email: String, username: String, password: String): User {
+        val trimmedEmail = email.trim()
         val user = userRepository.findByEmailOrUsername(
-            email = email.trim(),
+            email = trimmedEmail,
             username = username.trim()
         )
 
@@ -39,14 +43,16 @@ class AuthService(
             throw UserAlreadyExistsException()
         }
 
-        val saveUser = userRepository.save(
+        val saveUser = userRepository.saveAndFlush(
             UserEntity(
-                email = email.trim(),
+                email = trimmedEmail,
                 username = username.trim(),
                 hashedPassword = passwordEncoder.encode(password.trim())
                     ?: throw IllegalStateException("Password encoding failed")
             )
         ).toUser()
+
+        val token = emailVerificationService.createVerificationToken(trimmedEmail)
 
         return saveUser
     }
@@ -61,7 +67,9 @@ class AuthService(
             throw InvalidCredentialsException()
         }
 
-        //TODO: Check for verified email
+        if (user.hasVerifiedEmail.not()) {
+            throw EmailNotVerifiedException()
+        }
 
 
         return user.id?.let { userId ->
