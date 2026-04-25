@@ -1,5 +1,6 @@
 package com.example.chirp.infra.database.entities
 
+import com.example.chirp.infra.security.TokenGenerator
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -23,7 +24,7 @@ class EmailVerificationTokenEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
     @Column(nullable = false, unique = true)
-    var token: String,
+    var token: String = TokenGenerator.generateSecureToken(),
     @Column(nullable = false, unique = true)
     var expiresAt: Instant,
     @ManyToOne(fetch = FetchType.LAZY)
