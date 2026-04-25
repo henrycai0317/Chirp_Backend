@@ -1,4 +1,4 @@
-package com.example.chirp.service.auth
+package com.example.chirp.service
 
 import com.example.chirp.domain.exception.InvalidTokenException
 import com.example.chirp.domain.exception.UserNotFoundException

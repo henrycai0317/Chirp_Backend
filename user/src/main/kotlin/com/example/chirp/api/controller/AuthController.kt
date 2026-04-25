@@ -7,11 +7,10 @@ import com.example.chirp.api.dto.RegisterRequest
 import com.example.chirp.api.dto.UserDto
 import com.example.chirp.api.mappers.toAuthenticatedUserDto
 import com.example.chirp.api.mappers.toUserDto
-import com.example.chirp.service.auth.AuthService
-import com.example.chirp.service.auth.EmailVerificationService
+import com.example.chirp.service.AuthService
+import com.example.chirp.service.EmailVerificationService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.Mapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping

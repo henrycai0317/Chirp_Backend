@@ -1,4 +1,4 @@
-package com.example.chirp.service.auth
+package com.example.chirp.service
 
 import com.example.chirp.domain.exception.EmailNotVerifiedException
 import com.example.chirp.domain.exception.InvalidCredentialsException
@@ -14,13 +14,11 @@ import com.example.chirp.infra.database.repositories.RefreshTokenRepository
 import com.example.chirp.infra.database.repositories.UserRepository
 import com.example.chirp.infra.mappers.toUser
 import com.example.chirp.infra.security.PasswordEncoder
-import com.example.chirp.service.JwtService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.security.MessageDigest
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.util.Base64
 
 @Service
