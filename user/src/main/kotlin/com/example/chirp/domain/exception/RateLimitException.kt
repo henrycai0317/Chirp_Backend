@@ -1,8 +1,8 @@
 package com.example.chirp.domain.exception
 
 class RateLimitException(
-    val resultsInSeconds: Long
+    val resetsInSeconds: Long
 ): RuntimeException(
-    "Rate limit exceeded. Please try again in $resultsInSeconds seconds."
+    "Rate limit exceeded. Please try again in $resetsInSeconds seconds."
 ) {
 }
