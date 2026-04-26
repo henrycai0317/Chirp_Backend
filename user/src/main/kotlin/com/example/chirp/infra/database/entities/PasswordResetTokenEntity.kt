@@ -33,7 +33,7 @@ class PasswordResetTokenEntity(
     var user: UserEntity,
     @Column(nullable = false)
     var expiresAt: Instant,
-    @Column(nullable = false)
+    @Column(nullable = true)
     var usedAt: Instant? = null,
     @CreationTimestamp
     var createdAt: Instant = Instant.now(),
