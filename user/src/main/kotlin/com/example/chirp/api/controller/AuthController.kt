@@ -10,6 +10,7 @@ import com.example.chirp.api.dto.ResetPasswordRequest
 import com.example.chirp.api.dto.UserDto
 import com.example.chirp.api.mappers.toAuthenticatedUserDto
 import com.example.chirp.api.mappers.toUserDto
+import com.example.chirp.infra.rate_limiting.EmailRateLimiter
 import com.example.chirp.service.AuthService
 import com.example.chirp.service.EmailVerificationService
 import com.example.chirp.service.PasswordResetService
@@ -26,7 +27,8 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val authService: AuthService,
     private val emailVerificationService: EmailVerificationService,
-    private val passwordResetService: PasswordResetService
+    private val passwordResetService: PasswordResetService,
+    private val emailRateLimiter: EmailRateLimiter
 ) {
 
     @PostMapping("/register")
@@ -62,8 +64,19 @@ class AuthController(
     @PostMapping("/logout")
     fun logout(
         @RequestBody body: RefreshRequest
-    ){
-         authService.logout(body.refreshToken)
+    ) {
+        authService.logout(body.refreshToken)
+    }
+
+    @PostMapping("/resend-verification")
+    fun resendVerification(
+        @Valid @RequestBody body: EmailRequest
+    ) {
+        emailRateLimiter.withRateLimit(
+            email = body.email
+        ) {
+            emailVerificationService.resendVerificationEmail(body.email)
+        }
     }
 
     @GetMapping("/verify")
@@ -83,7 +96,7 @@ class AuthController(
     @PostMapping("/reset-password")
     fun resetPassword(
         @Valid @RequestBody body: ResetPasswordRequest
-    ){
+    ) {
         passwordResetService.resetPassword(
             token = body.token,
             newPassword = body.newPassword,
@@ -93,7 +106,7 @@ class AuthController(
     @PostMapping("/change-password")
     fun changePassword(
         @Valid @RequestBody body: ChangePasswordRequest
-    ){
-       //TODO: Extract request user ID and call service
+    ) {
+        //TODO: Extract request user ID and call service
     }
 }
