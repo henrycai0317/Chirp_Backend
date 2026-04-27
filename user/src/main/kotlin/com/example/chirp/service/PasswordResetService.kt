@@ -4,7 +4,7 @@ import com.example.chirp.domain.exception.InvalidCredentialsException
 import com.example.chirp.domain.exception.InvalidTokenException
 import com.example.chirp.domain.exception.SamePasswordException
 import com.example.chirp.domain.exception.UserNotFoundException
-import com.example.chirp.domain.model.UserId
+import com.example.chirp.domain.type.UserId
 import com.example.chirp.infra.database.entities.PasswordResetTokenEntity
 import com.example.chirp.infra.database.repositories.PasswordResetTokenRepository
 import com.example.chirp.infra.database.repositories.RefreshTokenRepository

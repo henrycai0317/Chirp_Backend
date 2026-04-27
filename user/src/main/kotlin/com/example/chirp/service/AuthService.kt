@@ -7,7 +7,7 @@ import com.example.chirp.domain.exception.UserAlreadyExistsException
 import com.example.chirp.domain.exception.UserNotFoundException
 import com.example.chirp.domain.model.AuthenticatedUser
 import com.example.chirp.domain.model.User
-import com.example.chirp.domain.model.UserId
+import com.example.chirp.domain.type.UserId
 import com.example.chirp.infra.database.entities.RefreshTokenEntity
 import com.example.chirp.infra.database.entities.UserEntity
 import com.example.chirp.infra.database.repositories.RefreshTokenRepository

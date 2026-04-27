@@ -12,7 +12,7 @@ import com.example.chirp.api.dto.UserDto
 import com.example.chirp.api.mappers.toAuthenticatedUserDto
 import com.example.chirp.api.mappers.toUserDto
 import com.example.chirp.api.util.requestUserId
-import com.example.chirp.domain.model.UserId
+import com.example.chirp.domain.type.UserId
 import com.example.chirp.infra.rate_limiting.EmailRateLimiter
 import com.example.chirp.service.AuthService
 import com.example.chirp.service.EmailVerificationService

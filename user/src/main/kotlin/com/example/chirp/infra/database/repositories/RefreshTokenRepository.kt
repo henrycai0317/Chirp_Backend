@@ -1,6 +1,6 @@
 package com.example.chirp.infra.database.repositories
 
-import com.example.chirp.domain.model.UserId
+import com.example.chirp.domain.type.UserId
 import com.example.chirp.infra.database.entities.RefreshTokenEntity
 import org.springframework.data.jpa.repository.JpaRepository
 
