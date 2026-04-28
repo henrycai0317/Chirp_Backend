@@ -1,5 +1,6 @@
 package com.example.chirp.service
 
+import com.example.chirp.domain.events.user.UserEvent
 import com.example.chirp.domain.exception.EmailNotVerifiedException
 import com.example.chirp.domain.exception.InvalidCredentialsException
 import com.example.chirp.domain.exception.InvalidTokenException
@@ -13,6 +14,7 @@ import com.example.chirp.infra.database.entities.UserEntity
 import com.example.chirp.infra.database.repositories.RefreshTokenRepository
 import com.example.chirp.infra.database.repositories.UserRepository
 import com.example.chirp.infra.mappers.toUser
+import com.example.chirp.infra.message_queue.EventPublisher
 import com.example.chirp.infra.security.PasswordEncoder
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -27,7 +29,8 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val jwtService: JwtService,
     private val refreshTokenRepository: RefreshTokenRepository,
-    private val emailVerificationService: EmailVerificationService
+    private val emailVerificationService: EmailVerificationService,
+    private val eventPublisher: EventPublisher,
 ) {
     @Transactional
     fun register(email: String, username: String, password: String): User {
@@ -51,6 +54,15 @@ class AuthService(
         ).toUser()
 
         val token = emailVerificationService.createVerificationToken(trimmedEmail)
+
+        eventPublisher.publish(
+            event = UserEvent.Created(
+                userId = saveUser.id,
+                email = saveUser.email,
+                username = saveUser.username,
+                verificationToken = token.token
+            )
+        )
 
         return saveUser
     }
@@ -86,7 +98,7 @@ class AuthService(
 
     @Transactional
     fun refresh(refreshToken: String): AuthenticatedUser {
-        if(jwtService.validateRefreshToken(refreshToken).not()) {
+        if (jwtService.validateRefreshToken(refreshToken).not()) {
             throw InvalidTokenException(
                 message = "Invalid Refresh token"
             )
