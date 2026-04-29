@@ -75,6 +75,7 @@ jwt:
 
 chirp:
   email:
+    from: "Chirp <postmaster@sandbox5eade1209cf44bea8d5060ddf086c084.mailgun.org>"
     verification:
       expiry-hours: 24
     reset-password:
