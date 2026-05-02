@@ -8,6 +8,7 @@ import com.example.chirp.infra.database.entities.EmailVerificationTokenEntity
 import com.example.chirp.infra.database.repositories.EmailVerificationTokenRepository
 import com.example.chirp.infra.database.repositories.UserRepository
 import com.example.chirp.infra.mappers.toEmailVerificationToken
+import com.example.chirp.infra.mappers.toUser
 import com.example.chirp.infra.message_queue.EventPublisher
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
@@ -80,6 +81,14 @@ class EmailVerificationService(
             verificationToken.user.apply {
                 this.hasVerifiedEmail = true
             }
+        ).toUser()
+
+        eventPublisher.publish(
+            event = UserEvent.Verified(
+                userId = verificationToken.user.id!!,
+                email = verificationToken.user.email,
+                username = verificationToken.user.username,
+            )
         )
     }
 
