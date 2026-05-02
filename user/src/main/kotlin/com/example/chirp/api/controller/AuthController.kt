@@ -12,13 +12,11 @@ import com.example.chirp.api.dto.UserDto
 import com.example.chirp.api.mappers.toAuthenticatedUserDto
 import com.example.chirp.api.mappers.toUserDto
 import com.example.chirp.api.util.requestUserId
-import com.example.chirp.domain.type.UserId
 import com.example.chirp.infra.rate_limiting.EmailRateLimiter
 import com.example.chirp.service.AuthService
 import com.example.chirp.service.EmailVerificationService
 import com.example.chirp.service.PasswordResetService
 import jakarta.validation.Valid
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
