@@ -47,6 +47,7 @@ class ChatMessageEntity(
         insertable = false,
         updatable = false
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var chat: ChatEntity? = null,
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
