@@ -1,5 +1,7 @@
 package com.example.chirp.service
 
+import com.example.chirp.api.dto.ChatMessageDto
+import com.example.chirp.api.mappers.toChatMessageDto
 import com.example.chirp.domain.exception.ChatNotFoundException
 import com.example.chirp.domain.exception.ChatParticipantNotFoundException
 import com.example.chirp.domain.exception.ForbiddenException
@@ -14,10 +16,13 @@ import com.example.chirp.infra.database.mappers.toChatMessage
 import com.example.chirp.infra.database.repositories.ChatMessageRepository
 import com.example.chirp.infra.database.repositories.ChatParticipantRepository
 import com.example.chirp.infra.database.repositories.ChatRepository
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 @Service
 class ChatService(
@@ -26,6 +31,28 @@ class ChatService(
     private val chatMessageRepository: ChatMessageRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
+
+    @Cacheable(
+        value = ["messages"],
+        key = "#chatId",
+        condition = "#before == null && #pageSize <= 50",
+        sync = true
+    )
+    fun getChatMessages(
+        chatId: ChatId,
+        before: Instant?,
+        pageSize: Int
+    ): List<ChatMessageDto> {
+        return chatMessageRepository
+            .findByChatIdBefore(
+                chatId = chatId,
+                before = before ?: Instant.now(),
+                pageable = PageRequest.of(0, pageSize)
+            )
+            .content
+            .asReversed()
+            .map { it.toChatMessage().toChatMessageDto() }
+    }
 
     @Transactional
     fun createChat(
