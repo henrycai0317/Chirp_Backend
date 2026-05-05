@@ -2,6 +2,8 @@ package com.example.chirp.service
 
 import com.example.chirp.api.dto.ChatMessageDto
 import com.example.chirp.api.mappers.toChatMessageDto
+import com.example.chirp.domain.event.ChatParticipantLeftEvent
+import com.example.chirp.domain.event.ChatParticipantsJoinedEvent
 import com.example.chirp.domain.exception.ChatNotFoundException
 import com.example.chirp.domain.exception.ChatParticipantNotFoundException
 import com.example.chirp.domain.exception.ForbiddenException
@@ -108,6 +110,13 @@ class ChatService(
             }
         ).toChat(lastMessage)
 
+        applicationEventPublisher.publishEvent(
+            ChatParticipantsJoinedEvent(
+                chatId = chatId,
+                userIds = userIds
+            )
+        )
+
         return updatedChat
     }
 
@@ -132,6 +141,13 @@ class ChatService(
             chat.apply {
                 this.participants = chat.participants - participant
             }
+        )
+
+        applicationEventPublisher.publishEvent(
+            ChatParticipantLeftEvent(
+                chatId = chatId,
+                userId = userId
+            )
         )
 
     }

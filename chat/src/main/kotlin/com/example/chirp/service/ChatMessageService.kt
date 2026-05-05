@@ -1,5 +1,7 @@
 package com.example.chirp.service
 
+import com.example.chirp.domain.event.MessageDeletedEvent
+import com.example.chirp.domain.events.chat.ChatEvent
 import com.example.chirp.domain.exception.ChatNotFoundException
 import com.example.chirp.domain.exception.ChatParticipantNotFoundException
 import com.example.chirp.domain.exception.ForbiddenException
@@ -13,6 +15,7 @@ import com.example.chirp.infra.database.mappers.toChatMessage
 import com.example.chirp.infra.database.repositories.ChatMessageRepository
 import com.example.chirp.infra.database.repositories.ChatParticipantRepository
 import com.example.chirp.infra.database.repositories.ChatRepository
+import com.example.chirp.infra.message_queue.EventPublisher
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
@@ -27,6 +30,7 @@ class ChatMessageService(
     private val chatMessageRepository: ChatMessageRepository,
     private val chatParticipantRepository: ChatParticipantRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
+    private val eventPublisher: EventPublisher,
     private val messageCacheManager: MessageCacheManager
 ) {
 
@@ -56,6 +60,16 @@ class ChatMessageService(
             )
         )
 
+        eventPublisher.publish(
+            event = ChatEvent.NewMessage(
+                senderId = sender.userId,
+                senderUsername = sender.username,
+                recipientIds = chat.participants.map { it.userId }.toSet(),
+                chatId = chatId,
+                message = savedMessage.content
+            )
+        )
+
         return savedMessage.toChatMessage()
     }
 
@@ -73,6 +87,13 @@ class ChatMessageService(
         }
 
         chatMessageRepository.delete(message)
+
+        applicationEventPublisher.publishEvent(
+            MessageDeletedEvent(
+                chatId = message.chatId,
+                messageId = messageId
+            )
+        )
 
 
         messageCacheManager.evictMessagesCache(message.chatId)
