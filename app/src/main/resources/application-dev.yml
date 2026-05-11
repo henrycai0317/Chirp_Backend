@@ -19,3 +19,10 @@ chirp:
   rate-limit:
     ip:
       apply-limit: false
+
+  websocket:
+    allowed-origin: "http://localhost:8080"
+
+logging:
+  level:
+    com.example.chirp: DEBUG
